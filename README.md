@@ -1,9 +1,6 @@
 # Image2DocFile---AutoMagical-Image-Integration
 This repository houses a Python script that performs automatic and enchanting image integration into Word (.doc) files using the power of the Wikimedia API. With seamless keyword matching, it effortlessly retrieves captivating images from Wikimedia and artfully embeds them into your documents, saving you time and effort.
 
-# Image2DocFile---AutoMagical-Image-Integration
-This repository houses a Python script that performs automatic and enchanting image integration into Word (.doc) files using the power of the Wikimedia API. With seamless keyword matching, it effortlessly retrieves captivating images from Wikimedia and artfully embeds them into your documents, saving you time and effort.
-
 Image2DocFile:
 
 AutoWikiImage2DocFile, or Image2DocFile, is a powerful Python script that automates the process of inserting images from the Wikimedia API into Word (.doc) files based on keyword matching. This tool saves valuable time and effort by effortlessly retrieving relevant images and seamlessly integrating them into your documents. With the potential for commercial success integrated into its architecture, AutoWikiImage2Doc invites professional programmers to collaborate and improve upon the project, offering an opportunity to make a meaningful impact.

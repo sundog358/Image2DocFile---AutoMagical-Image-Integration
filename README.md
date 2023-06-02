@@ -1,19 +1,19 @@
-# Image2DocFile---AutoMagical-Image-Integration
-This repository houses a Python script that performs automatic and enchanting image integration into Word (.doc) files using the power of the Wikimedia API. With seamless keyword matching, it effortlessly retrieves captivating images from Wikimedia and artfully embeds them into your documents, saving you time and effort.
 
-Image2DocFile:
+AutoWikiImage2DocFile - AutoMagical Image Integration
 
-AutoWikiImage2DocFile, or Image2DocFile, is a powerful Python script that automates the process of inserting images from the Wikimedia API into Word (.doc) files based on keyword matching. This tool saves valuable time and effort by effortlessly retrieving relevant images and seamlessly integrating them into your documents. With the potential for commercial success integrated into its architecture, AutoWikiImage2Doc invites professional programmers to collaborate and improve upon the project, offering an opportunity to make a meaningful impact.
+AutoWikiImage2DocFile:
+
+AutoWikiImage2DocFile, also known as Image2DocFile, is a powerful Python script that automates the process of enchantingly integrating captivating images from the Wikimedia API into Word (.doc) files. With seamless keyword matching, this tool effortlessly retrieves relevant images and artfully embeds them into your documents, saving you valuable time and effort.
 
 Features:
 
 Effortless Image Retrieval: 
 
-Utilizing the Wikimedia API, AutoWikiImage2DocFile searches for images based on keyword matching, ensuring that the images are relevant to your document content.
+Utilizing the Wikimedia API, AutoWikiImage2DocFile intelligently searches for images based on keyword matching, ensuring that the inserted images perfectly complement your document content.
 
 Parallel Image Fetching: 
 
-With a built-in ThreadPoolExecutor, AutoWikiImage2DocFile fetches images in parallel, optimizing the performance and reducing processing time.
+With a built-in ThreadPoolExecutor, AutoWikiImage2DocFile fetches images in parallel, optimizing performance and reducing processing time.
 
 Keyword Extraction: 
 
@@ -21,30 +21,59 @@ AutoWikiImage2DocFile intelligently extracts keywords from your document, enabli
 
 Customizable Insertion Options: 
 
-AutoWikiImage2DocFile provides flexibility in customizing keyword matching and image insertion options, allowing you to fine-tune the integration process to meet your specific requirements.
+Fine-tune the image integration process to your specific requirements with customizable keyword matching and image insertion options.
 
 Commercial Viability: 
 
 Designed with the potential for commercial success in mind, AutoWikiImage2DocFile enables you to monetize your project while attracting collaborators and contributors.
 
+Caching: 
+
+The fetch_image function now incorporates caching using the cachetools library, reducing the number of requests made to the Wikimedia API by caching results for a specified period of time.
+
+Progress Bar: 
+
+The keyword processing loop now features a progress bar using the tqdm library, providing visual feedback on the progress of the file processing.
+
+Asynchronous Processing: 
+
+The process_file function has been converted into an asynchronous function, leveraging asyncio.run to execute it within the drop function. This allows the program to perform other tasks while awaiting completion of image fetching requests.
+
+Detailed Logging: 
+
+More detailed logging messages have been added, including in the exception handling blocks, providing improved visibility and debugging capabilities.
+
+Enhanced Error Handling: 
+
+Specific exception handling for requests.exceptions.RequestException has been added in the insert_image function, providing better insights into encountered issues.
+
+PEP 8 Compliance: 
+
+The code has been updated to adhere more closely to the PEP 8 style guide, including considerations for line length, variable naming conventions, and spacing.
+
 Usage:
 
-Installation: Make sure you have Python installed on your system. Clone this repository and install the necessary dependencies by running the following command:
+Installation:
+
+Make sure you have Python installed on your system. Clone this repository and install the necessary dependencies by running the following command:
 
 pip install -r requirements.txt
+Drag and Drop
 
-Drag and Drop: Run the script using the following command:
+To run the script, execute the following command:
 
-python main.py
+python AutoInsertImagesProgram.py
 
-A Tkinter window will open with a label that says "Drag and Drop a Word File Here". Simply drag and drop your Word (.doc) file onto the window, and AutoWikiImage2Doc will process it, inserting relevant images based on the content.
 
-Customization: 
+A Tkinter window will open, displaying a label that says "Drag and Drop a Word File Here". Simply drag and drop your Word (.doc) file onto the window, and AutoWikiImage2DocFile will process it, inserting relevant images based on the content.
+
+Customization:
+
 You can customize the behavior of AutoWikiImage2DocFile by modifying the script. Adjust the keyword extraction criteria, image insertion options, and more to tailor the tool to your specific needs.
 
 Collaboration:
 
-AutoWikiImage2DocFile welcomes collaboration from professional programmers who are enthusiastic about improving the project. Whether it's enhancing the algorithm, adding new features, or refining the user experience, your contributions are highly valued. 
+AutoWikiImage2DocFile welcomes collaboration from professional programmers who are enthusiastic about improving the project. Whether it's enhancing the algorithm, adding new features, or refining the user experience, your contributions are highly valued.
 
 To collaborate, follow these steps:
 
@@ -58,7 +87,7 @@ Your pull request will be reviewed, and upon approval, your changes will be merg
 
 License:
 
-AutoWikiImage2DocFile, also known as Image2DocFile is licensed under the MIT License. Feel free to use, modify, and distribute the code as per the terms of the license. Refer to the LICENSE file for more information.
+AutoWikiImage22DocFile is licensed under the MIT License. Feel free to use, modify, and distribute the code as per the terms of the license. Refer to the LICENSE file for more information.
 
 Disclaimer:
 
@@ -66,6 +95,6 @@ While AutoWikiImage2DocFile is designed to simplify the process of image integra
 
 Support:
 
-If you encounter any issues, have questions, or need assistance with AutoWikiImage2DocFile, also known as Image2DocFile, please open an issue in the repository. We are here to help and appreciate your feedback!
+If you encounter any issues, have questions, or need assistance with AutoWikiImage2DocFile, please open an issue in the repository. We are here to help and appreciate your feedback!
 
 Let's collaborate and bring magic to document creation with AutoWikiImage2DocFile !

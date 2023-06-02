@@ -4,7 +4,8 @@ from docx import Document
 from collections import Counter
 import requests
 import os
-from PIL import Image
+import cv2
+import numpy as np
 from docx.shared import Inches
 import io
 import logging
@@ -12,6 +13,8 @@ from concurrent.futures import ThreadPoolExecutor
 from cachetools import cached, TTLCache  # for caching
 from tqdm import tqdm  # for progress bar
 import asyncio  # for concurrency
+import unittest  # for unit testing
+from wikimedia import Wikimedia
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -22,15 +25,18 @@ executor = ThreadPoolExecutor(max_workers=5)
 # Set up caching
 cache = TTLCache(maxsize=100, ttl=300)
 
+# Create a Wikimedia object for interacting with the Wikimedia API
+wikimedia = Wikimedia()
+
+# List to store image URLs for bibliography
+bibliography = []
+
 @cached(cache)
 def fetch_image(image_title):
     """
     Function to fetch the image URL
     """
-    url = f"https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url&titles={image_title}"
-    response = requests.get(url)
-    imageinfo = list(response.json()['query']['pages'].values())[0]['imageinfo'][0]
-    image_url = imageinfo['url']
+    image_url = wikimedia.image_url(image_title)
     return image_url
 
 def insert_image(doc, image_url):
@@ -40,13 +46,17 @@ def insert_image(doc, image_url):
     try:
         image_response = requests.get(image_url)
         image_bytes = image_response.content
-        with Image.open(io.BytesIO(image_bytes)) as pil_image:
-            with pil_image.copy() as resized_image:
-                resized_image.thumbnail((Inches(1.25), Inches(1.25)))
-                temp_filepath = 'temp.jpg'
-                resized_image.save(temp_filepath)
-                doc.add_picture(temp_filepath)
+        nparr = np.fromstring(image_bytes, np.uint8)
+        img_np = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+        resized_image = cv2.resize(img_np, (Inches(1.25), Inches(1.25)), interpolation = cv2.INTER_AREA)
+        temp_filepath = 'temp.jpg'
+        cv2.imwrite(temp_filepath, resized_image)
+        doc.add_picture(temp_filepath)
         os.remove(temp_filepath)
+        # Add image caption and source
+        doc.add_paragraph(f"Image source: {image_url}")
+        # Add image URL to bibliography
+        bibliography.append(image_url)
     except requests.exceptions.RequestException as e:
         logging.error(f"An error occurred while fetching the image: {e}")
     except Exception as e:
@@ -57,6 +67,9 @@ async def process_file(filepath):
     Function to process the file
     """
     try:
+        if not os.path.isfile(filepath):
+            raise FileNotFoundError(f"No such file or directory: '{filepath}'")
+
         doc = Document(filepath)
         text = ' '.join([paragraph.text for paragraph in doc.paragraphs])
         keywords = extract_keywords(text)
@@ -65,34 +78,31 @@ async def process_file(filepath):
             image_urls = list(executor.map(fetch_image, images))
             for image_url in image_urls:
                 insert_image(doc, image_url)
+        # Add bibliography to the end of the document
+        doc.add_section()
+        doc.add_paragraph("Bibliography:")
+        for source in bibliography:
+            doc.add_paragraph(source)
         modified_filepath = 'modified_' + filepath
         doc.save(modified_filepath)
         logging.info(f"Finished processing file: {modified_filepath}")
     except Exception as e:
         logging.error(f"An error occurred while processing the file: {e}")
 
-def extract_keywords(text):
+def extract_keywords(text, threshold=5):
     """
     Function to extract keywords from the text
     """
     words = text.split()
     counter = Counter(words)
-    keywords = [word for word, count in counter.items() if count > 5]
+    keywords = [word for word, count in counter.items() if count > threshold]
     return keywords
 
 def find_images(keyword):
     """
     Function to find images related to the keyword
     """
-    url = f"https://commons.wikimedia.org/w/api.php?action=query&format=json&list=search&srsearch={keyword}"
-    response = requests.get(url)
-    pages = response.json()['query']['search']
-    images = []
-    for page in pages:
-        url = f"https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=images&pageids={page['pageid']}"
-        response = requests.get(url)
-        page_images = response.json()['query']['pages'][str(page['pageid'])]['images']
-        images.extend([image['title'] for image in page_images])
+    images = wikimedia.search_images(keyword)
     return images
 
 def drop(event):
@@ -101,19 +111,23 @@ def drop(event):
     """
     try:
         filepath = event.data
-        asyncio.run(process_file(filepath))  # use asyncio for concurrency
+        asyncio.run(process_file(filepath))
     except Exception as e:
-        logging.error(f"An error occurred during the drop event: {e}")
+        logging.error(f"An error occurred while handling the drop event: {e}")
 
-if __name__ == '__main__':
+# Add a simple GUI for keyword extraction
+def create_gui():
     root = tk.Tk()
-    root.drop_target_register(DND_FILES)
-    root.dnd_bind('<<Drop>>', drop)
-
-    label = tk.Label(root, text='Drag and Drop a Word File Here')
-    label.pack()
-
+    threshold_label = tk.Label(root, text="Keyword Threshold:")
+    threshold_label.pack()
+    threshold_entry = tk.Entry(root)
+    threshold_entry.pack()
+    threshold_button = tk.Button(root, text="Set Threshold", command=lambda: extract_keywords(threshold=int(threshold_entry.get())))
+    threshold_button.pack()
     root.mainloop()
+
+if __name__ == "__main__":
+    create_gui()
 
 
 

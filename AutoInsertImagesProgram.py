@@ -92,7 +92,7 @@ def find_images(keyword):
         url = f"https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=images&pageids={page['pageid']}"
         response = requests.get(url)
         page_images = response.json()['query']['pages'][str(page['pageid'])]['images']
-        images.extend([image['title'] forimage in page_images])
+        images.extend([image['title'] for image in page_images])
     return images
 
 def drop(event):
@@ -114,6 +114,7 @@ if __name__ == '__main__':
     label.pack()
 
     root.mainloop()
+
 
 
 
